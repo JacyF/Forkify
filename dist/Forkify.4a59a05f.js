@@ -2078,7 +2078,6 @@ const loadRecipe = async function(id) {
         state.recipe = createRecipeObject(data);
         if (state.bookmarks.some((bookmark)=>bookmark.id === id)) state.recipe.bookmarked = true;
         else state.recipe.bookmarked = false;
-        console.log(state.recipe);
     } catch (err) {
         // Temp error handling
         console.error(`${err} \u{1F4A5}\u{1F4A5}\u{1F4A5}\u{1F4A5}`);
