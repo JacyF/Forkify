@@ -677,8 +677,6 @@ var _searchViewJs = require("./views/searchView.js");
 var _searchViewJsDefault = parcelHelpers.interopDefault(_searchViewJs);
 var _resultsViewJs = require("./views/resultsView.js");
 var _resultsViewJsDefault = parcelHelpers.interopDefault(_resultsViewJs);
-var _paginationViewJs = require("./views/paginationView.js");
-var _paginationViewJsDefault = parcelHelpers.interopDefault(_paginationViewJs);
 var _bookmarksViewJs = require("./views/bookmarksView.js");
 var _bookmarksViewJsDefault = parcelHelpers.interopDefault(_bookmarksViewJs);
 var _addRecipeViewJs = require("./views/addRecipeView.js");
@@ -714,7 +712,7 @@ const controlSearchResults = async function() {
         // 3) Render results
         (0, _resultsViewJsDefault.default).render(_modelJs.getSearchResultsPage());
         // 4) Render initial pagination buttons
-        (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
+        paginationView.render(_modelJs.state.search);
     } catch (err) {
         console.log(err);
     }
@@ -723,7 +721,7 @@ const controlPagination = function(goToPage) {
     // 1) Render NEW results
     (0, _resultsViewJsDefault.default).render(_modelJs.getSearchResultsPage(goToPage));
     // 2) Render NEW pagination buttons
-    (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
+    paginationView.render(_modelJs.state.search);
 };
 const controlServings = function(newServings) {
     // Update the recipe servings (in state)
@@ -773,12 +771,12 @@ const init = function() {
     (0, _recipeViewJsDefault.default).addHandlerUpdateServings(controlServings);
     (0, _recipeViewJsDefault.default).addHandlerAddBookmark(controlAddBookmark);
     (0, _searchViewJsDefault.default).addHandlerSearch(controlSearchResults);
-    (0, _paginationViewJsDefault.default).addHandlerClick(controlPagination);
+    paginationView.addHandlerClick(controlPagination);
     (0, _addRecipeViewJsDefault.default).addHandlerUpload(controlAddRecipe);
 };
 init();
 
-},{"core-js/modules/web.immediate.js":"bzsBv","./model.js":"3QBkH","./config.js":"2hPh4","./views/recipeView.js":"3wx5k","./views/searchView.js":"kbE4Z","./views/resultsView.js":"kBQ4r","./views/paginationView.js":"7NIiB","./views/bookmarksView.js":"1qGeA","./views/addRecipeView.js":"8AWnP","regenerator-runtime/runtime":"f6ot0","regenerator-runtime":"f6ot0","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"bzsBv":[function(require,module,exports,__globalThis) {
+},{"core-js/modules/web.immediate.js":"bzsBv","./model.js":"3QBkH","regenerator-runtime/runtime":"f6ot0","regenerator-runtime":"f6ot0","./config.js":"2hPh4","./views/recipeView.js":"3wx5k","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./views/searchView.js":"kbE4Z","./views/resultsView.js":"kBQ4r","./views/bookmarksView.js":"1qGeA","./views/addRecipeView.js":"8AWnP"}],"bzsBv":[function(require,module,exports,__globalThis) {
 'use strict';
 // TODO: Remove this module from `core-js@4` since it's split to modules listed below
 require("52e9b3eefbbce1ed");
@@ -2811,7 +2809,8 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "AJAX", ()=>AJAX);
 var _regeneratorRuntime = require("regenerator-runtime");
-var _configJs = require("./config.js");
+// import { TIMEOUT_SEC } from './config.js';
+var _config = require("./config");
 const timeout = function(s) {
     return new Promise(function(_, reject) {
         setTimeout(function() {
@@ -2830,7 +2829,7 @@ const AJAX = async function(url, uploadData) {
         }) : fetch(url);
         const res = await Promise.race([
             fetchPro,
-            timeout((0, _configJs.TIMEOUT_SEC))
+            timeout((0, _config.TIMEOUT_SEC))
         ]);
         const data = await res.json();
         if (!res.ok) throw new Error(`${data.message} (${res.status})`);
@@ -2873,15 +2872,16 @@ export const sendJSON = async function (url, uploadData) {
 };
 */ 
 
-},{"regenerator-runtime":"f6ot0","./config.js":"2hPh4","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"3wx5k":[function(require,module,exports,__globalThis) {
+},{"regenerator-runtime":"f6ot0","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./config":"2hPh4"}],"3wx5k":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-var _view = require("./View");
-var _viewDefault = parcelHelpers.interopDefault(_view);
+var _viewJs = require("./View.js");
+var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
 // import icons from '../img/icons.svg'; // Parcel 1
-var _iconsSvg = require("url:../../img/icons.svg"); // Parcel 2
+// import icons from 'url:../../img/icons.svg'; // Parcel 2
+var _iconsSvg = require("url:../../img/icons.svg");
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
-class RecipeView extends (0, _viewDefault.default) {
+class RecipeView extends (0, _viewJsDefault.default) {
     _parentElement = document.querySelector('.recipe');
     _errorMessage = 'We could not find that recipe. Please try another one!';
     _message = '';
@@ -2999,13 +2999,11 @@ class RecipeView extends (0, _viewDefault.default) {
 }
 exports.default = new RecipeView();
 
-},{"url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./View":"jSw21"}],"fd0vu":[function(require,module,exports,__globalThis) {
-module.exports = module.bundle.resolve("icons.0809ef97.svg") + "?" + Date.now();
-
-},{}],"jSw21":[function(require,module,exports,__globalThis) {
+},{"./View.js":"jSw21","url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"jSw21":[function(require,module,exports,__globalThis) {
+// import icons from 'url:../../img/icons.svg'; // Parcel 2
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-var _iconsSvg = require("url:../../img/icons.svg"); // Parcel 2
+var _iconsSvg = require("url:../../img/icons.svg");
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
 class View {
     _data;
@@ -3086,7 +3084,10 @@ class View {
 }
 exports.default = View;
 
-},{"url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"kbE4Z":[function(require,module,exports,__globalThis) {
+},{"url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"fd0vu":[function(require,module,exports,__globalThis) {
+module.exports = module.bundle.resolve("icons.0809ef97.svg") + "?" + Date.now();
+
+},{}],"kbE4Z":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 class SearchView {
@@ -3115,8 +3116,7 @@ var _viewJs = require("./View.js");
 var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
 var _previewViewJs = require("./previewView.js");
 var _previewViewJsDefault = parcelHelpers.interopDefault(_previewViewJs);
-var _iconsSvg = require("url:../../img/icons.svg"); // Parcel 2
-var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+// import icons from 'url:../../img/icons.svg'; // Parcel 2
 class ResultsView extends (0, _viewJsDefault.default) {
     _parentElement = document.querySelector('.results');
     _errorMessage = 'No recipes found for your query! Please try again ;)';
@@ -3127,14 +3127,15 @@ class ResultsView extends (0, _viewJsDefault.default) {
 }
 exports.default = new ResultsView();
 
-},{"./View.js":"jSw21","./previewView.js":"6tKHS","url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"6tKHS":[function(require,module,exports,__globalThis) {
+},{"./View.js":"jSw21","./previewView.js":"6tKHS","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"6tKHS":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-var _view = require("./View");
-var _viewDefault = parcelHelpers.interopDefault(_view);
-var _iconsSvg = require("url:../../img/icons.svg"); // Parcel 2
+var _viewJs = require("./View.js");
+var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
+// import icons from 'url:../../img/icons.svg'; // Parcel 2
+var _iconsSvg = require("url:../../img/icons.svg");
 var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
-class PreviewView extends (0, _viewDefault.default) {
+class PreviewView extends (0, _viewJsDefault.default) {
     _parentElement = '';
     _generateMarkup() {
         const id = window.location.hash.slice(1);
@@ -3160,74 +3161,14 @@ class PreviewView extends (0, _viewDefault.default) {
 }
 exports.default = new PreviewView();
 
-},{"url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./View":"jSw21"}],"7NIiB":[function(require,module,exports,__globalThis) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-var _view = require("./View");
-var _viewDefault = parcelHelpers.interopDefault(_view);
-var _iconsSvg = require("url:../../img/icons.svg"); // Parcel 2
-var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
-class PaginationView extends (0, _viewDefault.default) {
-    _parentElement = document.querySelector('.pagination');
-    addHandlerClick(handler) {
-        this._parentElement.addEventListener('click', function(e) {
-            const btn = e.target.closest('.btn--inline');
-            if (!btn) return;
-            const goToPage = +btn.dataset.goto;
-            handler(goToPage);
-        });
-    }
-    _generateMarkup() {
-        const curPage = this._data.page;
-        const numPages = Math.ceil(this._data.results.length / this._data.resultsPerPage);
-        // Page 1, and there are other pages
-        if (curPage === 1 && numPages > 1) return `
-        <button data-goto="${curPage + 1}" class="btn--inline pagination__btn--next">
-          <span>Page ${curPage + 1}</span>
-          <svg class="search__icon">
-            <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>
-          </svg>
-        </button>
-      `;
-        // Last page
-        if (curPage === numPages && numPages > 1) return `
-        <button data-goto="${curPage - 1}" class="btn--inline pagination__btn--prev">
-          <svg class="search__icon">
-            <use href="${0, _iconsSvgDefault.default}#icon-arrow-left"></use>
-          </svg>
-          <span>Page ${curPage - 1}</span>
-        </button>
-      `;
-        // Other page
-        if (curPage < numPages) return `
-        <button data-goto="${curPage - 1}" class="btn--inline pagination__btn--prev">
-          <svg class="search__icon">
-            <use href="${0, _iconsSvgDefault.default}#icon-arrow-left"></use>
-          </svg>
-          <span>Page ${curPage - 1}</span>
-        </button>
-        <button data-goto="${curPage + 1}" class="btn--inline pagination__btn--next">
-          <span>Page ${curPage + 1}</span>
-          <svg class="search__icon">
-            <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>
-          </svg>
-        </button>
-      `;
-        // Page 1, and there are NO other pages
-        return '';
-    }
-}
-exports.default = new PaginationView();
-
-},{"url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./View":"jSw21"}],"1qGeA":[function(require,module,exports,__globalThis) {
+},{"./View.js":"jSw21","url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"1qGeA":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _viewJs = require("./View.js");
 var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
 var _previewViewJs = require("./previewView.js");
 var _previewViewJsDefault = parcelHelpers.interopDefault(_previewViewJs);
-var _iconsSvg = require("url:../../img/icons.svg"); // Parcel 2
-var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
+// import icons from 'url:../../img/icons.svg'; // Parcel 2
 class BookmarksView extends (0, _viewJsDefault.default) {
     _parentElement = document.querySelector('.bookmarks__list');
     _errorMessage = 'No bookmarks yet. Find a nice recipe and bookmark it ;)';
@@ -3241,14 +3182,13 @@ class BookmarksView extends (0, _viewJsDefault.default) {
 }
 exports.default = new BookmarksView();
 
-},{"./View.js":"jSw21","./previewView.js":"6tKHS","url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"8AWnP":[function(require,module,exports,__globalThis) {
+},{"./View.js":"jSw21","./previewView.js":"6tKHS","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"8AWnP":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-var _view = require("./View");
-var _viewDefault = parcelHelpers.interopDefault(_view);
-var _iconsSvg = require("url:../../img/icons.svg"); // Parcel 2
-var _iconsSvgDefault = parcelHelpers.interopDefault(_iconsSvg);
-class AddRecipeView extends (0, _viewDefault.default) {
+var _viewJs = require("./View.js");
+var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
+// import icons from 'url:../../img/icons.svg'; // Parcel 2
+class AddRecipeView extends (0, _viewJsDefault.default) {
     _parentElement = document.querySelector('.upload');
     _message = 'Recipe was successfully uploaded :)';
     _window = document.querySelector('.add-recipe-window');
@@ -3285,6 +3225,6 @@ class AddRecipeView extends (0, _viewDefault.default) {
 }
 exports.default = new AddRecipeView();
 
-},{"url:../../img/icons.svg":"fd0vu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","./View":"jSw21"}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {}, "./", "/")
+},{"./View.js":"jSw21","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["5DuvQ","7dWZ8"], "7dWZ8", "parcelRequire3a11", {}, "./", "/")
 
 //# sourceMappingURL=Forkify.4a59a05f.js.map
